@@ -3,11 +3,18 @@ uuid = "1517cc79-bb0a-4bbb-b892-cfca03fe0f7d"
 authors = ["Tobias Knopp <tobias.knopp@tuhh.de> and contributors"]
 version = "0.1.0"
 
+[deps]
+ImageMetadata = "bc367c6b-8a6b-528e-b4bd-a4b897500b49"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+
 [compat]
 julia = "1"
+Unitful = "1.2"
+ImageMetadata = "0.9.8"
 
 [extras]
+Scratch = "6c6a2e73-6563-6170-7368-637461726353"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Test", "Scratch"]
