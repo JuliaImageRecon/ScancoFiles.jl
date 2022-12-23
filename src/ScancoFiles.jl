@@ -24,7 +24,7 @@ function readScancoString(fd, len)
 end
 
 
-function load(filename::AbstractString; kargs)
+function load(filename::AbstractString; kargs...)
   filenamebase, ext = splitext(filename)
 
   if lowercase(ext) == ".isq"
@@ -82,11 +82,24 @@ function loadISQ(filename::AbstractString)
 
     params["headerSize"] = (params["dataOffset"] + 1) * 512
 
-    seek(fd, params["headerSize"])
+    
 
     dtype = Int16 # TODO: match this
-    I = read!(fd, Array{dtype}(undef, params["pixdim"]))
-    
+  
+    seek(fd,512)
+    specialMode = read(fd,Int16) == 2573    
+
+    if !specialMode
+      seek(fd, params["headerSize"])
+      I = read!(fd, Array{dtype}(undef, params["pixdim"]))
+    else
+      seek(fd,0)
+      Q = read!(fd, Array{Int16}(undef, filesize(fd)÷2))
+      Y = deleteat!(Q, 257:257:length(Q))
+      j = params["headerSize"] ÷ 2 + 1
+      I = collect(reshape( Y[j:j+prod(params["pixdim"])-1], params["pixdim"]))
+    end
+
     # TODO: Scale I
     return ImageMeta(I, ImageMetadata.to_dict(params))
   end
@@ -154,7 +167,20 @@ function loadRSQ(filename::AbstractString; sinogramPreprocessing=true)
     seek(fd, params["headerSize"])
 
     dtype = Int16 
-    I = read!(fd, Array{dtype}(undef, params["pixdim"]))
+  
+    seek(fd,512)
+    specialMode = read(fd,Int16) == 2573    
+
+    if !specialMode
+      seek(fd, params["headerSize"])
+      I = read!(fd, Array{dtype}(undef, params["pixdim"]))
+    else
+      seek(fd,0)
+      Q = read!(fd, Array{Int16}(undef, filesize(fd)÷2))
+      Y = deleteat!(Q, 257:257:length(Q))
+      j = params["headerSize"] ÷ 2 + 1
+      I = collect(reshape( Y[j:j+prod(params["pixdim"])-1], params["pixdim"]))
+    end
     
     # derived parameters
     params["detectorOffset"] = 0      
