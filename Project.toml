@@ -1,7 +1,7 @@
 name = "ScancoFiles"
 uuid = "1517cc79-bb0a-4bbb-b892-cfca03fe0f7d"
 authors = ["Tobias Knopp <tobias.knopp@tuhh.de> and contributors"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 ImageMetadata = "bc367c6b-8a6b-528e-b4bd-a4b897500b49"
